@@ -1,7 +1,8 @@
 {
     "name": "test-web-devops",
     "scripts": {
-        "dev": "bun run --hot src/index.tsx"
+        "dev": "bun run --hot src/index.tsx",
+        "serve": "bun run src/index.tsx"
     },
     "dependencies": {
         "hono": "^4.11.3"
