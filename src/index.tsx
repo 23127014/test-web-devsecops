@@ -22,7 +22,7 @@ app.use("*", async (c, next) => {
                     />
                     <meta name="color-scheme" content="light dark" />
                     <link rel="stylesheet" href="/assets/pico.classless.css" />
-                    <title>DevOps project test</title>
+                    <title>DevSecOps project test</title>
                 </head>
                 <body>{content}</body>
             </html>,
@@ -53,8 +53,8 @@ app.get("/", (c) => {
         <main class="container">
             <h1>Hello, Advanced Networking class!!!!!</h1>
             <p>
-                This is a <b>working</b> test page to demonstrate DevOps
-                functionality with Jenkins!
+                This is a <b>working</b> test page to demonstrate DevSecOps
+                functionality with Jenkins, Semgrep and OWASP ZAP!
             </p>
             <h2>Posts</h2>
             <ol>
