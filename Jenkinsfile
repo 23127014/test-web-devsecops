@@ -8,6 +8,9 @@ pipeline {
         DOCKER_CREDENTIALS_ID = 'docker-login'
         CONTAINER_NAME = 'test-web-devops-container'
         APP_PORT = '3000'
+
+        SEMGREP_APP_TOKEN = credentials('SEMGREP_APP_TOKEN')
+        SEMGREP_BASELINE_REF = "master"
     }
 
     triggers {
@@ -25,6 +28,33 @@ pipeline {
             }
         }
 
+        stage('Deploy and Run') {
+            steps {
+                script {
+                    echo 'Deploying container...'
+                    sh "docker stop ${CONTAINER_NAME} || true"
+                    sh "docker rm ${CONTAINER_NAME} || true"
+
+                    sh "docker run -d --restart unless-stopped --name ${CONTAINER_NAME} -p ${APP_PORT}:3000 ${FULL_IMAGE_NAME}:latest"
+                }
+            }
+        }
+
+        stage('Semgrep SAST Scan') {
+            steps {
+                sh '''docker pull semgrep/semgrep && \
+                docker run \
+                -e SEMGREP_APP_TOKEN=$SEMGREP_APP_TOKEN \
+                -e SEMGREP_REPO_URL=$SEMGREP_REPO_URL \
+                -e SEMGREP_REPO_NAME=$SEMGREP_REPO_NAME \
+                -e SEMGREP_BRANCH=$SEMGREP_BRANCH \
+                -e SEMGREP_COMMIT=$SEMGREP_COMMIT \
+                -e SEMGREP_PR_ID=$SEMGREP_PR_ID \
+                -v "$(pwd):$(pwd)" --workdir $(pwd) \
+                semgrep/semgrep semgrep ci '''
+            }
+        }
+
         stage('Push to Docker Hub') {
             steps {
                 script {
@@ -34,18 +64,6 @@ pipeline {
                         sh "docker push ${FULL_IMAGE_NAME}:${BUILD_NUMBER}"
                         sh "docker push ${FULL_IMAGE_NAME}:latest"
                     }
-                }
-            }
-        }
-
-        stage('Deploy and Run') {
-            steps {
-                script {
-                    echo 'Deploying container...'
-                    sh "docker stop ${CONTAINER_NAME} || true"
-                    sh "docker rm ${CONTAINER_NAME} || true"
-
-                    sh "docker run -d --restart unless-stopped --name ${CONTAINER_NAME} -p ${APP_PORT}:3000 ${FULL_IMAGE_NAME}:latest"
                 }
             }
         }
