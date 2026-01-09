@@ -3,10 +3,10 @@ pipeline {
 
     environment {
         DOCKER_HUB_USER = '23127014'
-        IMAGE_NAME = 'test-web-devops'
+        IMAGE_NAME = 'test-web-devsecops'
         FULL_IMAGE_NAME = "${DOCKER_HUB_USER}/${IMAGE_NAME}"
         DOCKER_CREDENTIALS_ID = 'docker-login'
-        CONTAINER_NAME = 'test-web-devops-container'
+        CONTAINER_NAME = 'test-web-devsecops-container'
         APP_PORT = '3000'
 
         SEMGREP_APP_TOKEN = credentials('SEMGREP_APP_TOKEN')
@@ -35,7 +35,7 @@ pipeline {
                     sh "docker stop ${CONTAINER_NAME} || true"
                     sh "docker rm ${CONTAINER_NAME} || true"
 
-                    sh "docker run -d --restart unless-stopped --name ${CONTAINER_NAME} -p ${APP_PORT}:3000 ${FULL_IMAGE_NAME}:latest"
+                    sh "docker run -d --restart unless-stopped --name ${CONTAINER_NAME} -p ${APP_PORT}:3001 ${FULL_IMAGE_NAME}:latest"
                 }
             }
         }
